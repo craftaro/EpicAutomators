@@ -302,9 +302,7 @@ public class Projectile {
                 material == Material.CARROTS ||
                 material == Material.POTATOES ||
                 material == Material.BEETROOTS ||
-                material == Material.NETHER_WART ||
-                material == Material.MELON ||
-                material == Material.PUMPKIN;
+                material == Material.NETHER_WART;
     }
 
     private boolean isCropFullyGrown(Block block) {
