@@ -18,6 +18,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
@@ -266,6 +268,17 @@ public class Projectile {
         } else {
             // Break the block normally
             Collection<ItemStack> drops = blockToBreak.getDrops();
+
+            // Check if the block is an inventory container
+            if (blockToBreak.getState() instanceof InventoryHolder) {
+                InventoryHolder inventoryHolder = (InventoryHolder) blockToBreak.getState();
+                Inventory inventory = inventoryHolder.getInventory();
+
+                // Drop the contents of the inventory onto the ground
+                for (ItemStack item : inventory.getContents()) 
+                    if (item != null)
+                        location.getWorld().dropItemNaturally(location, item);
+            }
 
             for (ItemStack drop : drops) {
                 if (!automator.hasRoomForItem(drop)) {
