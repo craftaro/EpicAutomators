@@ -275,7 +275,7 @@ public class Projectile {
                 Inventory inventory = inventoryHolder.getInventory();
 
                 // Drop the contents of the inventory onto the ground
-                for (ItemStack item : inventory.getContents()) 
+                for (ItemStack item : inventory.getContents())
                     if (item != null)
                         location.getWorld().dropItemNaturally(location, item);
             }
