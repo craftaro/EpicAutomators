@@ -1,62 +1,67 @@
-package com.craftaro.epicfarming.farming.levels;
+package com.songoda.epicautomators.automator.levels;
 
-import com.craftaro.epicfarming.EpicFarming;
-import com.craftaro.epicfarming.farming.levels.modules.Module;
+import com.craftaro.core.locale.Locale;
+import com.songoda.epicautomators.EpicAutomators;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Level {
-
-    private final ArrayList<Module> registeredModules;
     private final List<String> description = new ArrayList<>();
     private final int level;
     private final int costExperience;
     private final int costEconomy;
-    private final int radius;
-    private final int pages;
     private final double speedMultiplier;
-    private final boolean autoReplant;
+    private final int maxBlocks;
+    private final int maxDistance;
+    private final boolean autoPickup;
+    private final int damage;
+    private final Color color;
+    private final boolean crops;
+    private final boolean autoSmelt;
 
-
-    Level(int level, int costExperience, int costEconomy, double speedMultiplier, int radius, boolean autoReplant, int pages, ArrayList<Module> registeredModules) {
+    public Level(int level, int costExperience, int costEconomy, double speedMultiplier, int maxDistance, int maxBlocks,
+                 boolean autoPickup, int damage, Color color, boolean crops, boolean autoSmelt) {
         this.level = level;
         this.costExperience = costExperience;
         this.costEconomy = costEconomy;
         this.speedMultiplier = speedMultiplier;
-        this.radius = radius;
-        this.autoReplant = autoReplant;
-        this.pages = pages;
-        this.registeredModules = registeredModules;
-
+        this.maxDistance = maxDistance;
+        this.maxBlocks = maxBlocks;
+        this.autoPickup = autoPickup;
+        this.damage = damage;
+        this.color = color;
+        this.crops = crops;
+        this.autoSmelt = autoSmelt;
         buildDescription();
     }
 
     public void buildDescription() {
-        EpicFarming instance = EpicFarming.getPlugin(EpicFarming.class);
+        Locale locale = EpicAutomators.getInstance().getLocale();
 
-        this.description.add(instance.getLocale().getMessage("interface.button.radius")
-                .processPlaceholder("radius", this.radius).getMessage());
+        this.description.add(locale.getMessage("interface.automator.speed")
+                .processPlaceholder("speed", speedMultiplier).getMessage());
+        this.description.add(locale.getMessage("interface.automator.maxdistance")
+                .processPlaceholder("distance", maxDistance).getMessage());
+        this.description.add(locale.getMessage("interface.automator.maxblocks")
+                .processPlaceholder("blocks", maxBlocks).getMessage());
 
-        this.description.add(instance.getLocale().getMessage("interface.button.speed")
-                .processPlaceholder("speed", this.speedMultiplier).getMessage());
+        if (autoPickup)
+            this.description.add(locale.getMessage("interface.automator.autopickup")
+                    .processPlaceholder("autopickup", autoPickup).getMessage());
 
+        if (damage > 0)
+            this.description.add(locale.getMessage("interface.automator.damage")
+                    .processPlaceholder("damage", damage).getMessage());
 
-        if (this.autoReplant) {
-            this.description.add(instance.getLocale().getMessage("interface.button.autoreplant")
-                    .processPlaceholder("status",
-                            instance.getLocale().getMessage("general.interface.unlocked")
-                                    .getMessage()).getMessage());
-        }
+        if (crops)
+            this.description.add(locale.getMessage("interface.automator.crops")
+                    .processPlaceholder("crops", crops).getMessage());
 
-        if (this.pages > 1) {
-            this.description.add(instance.getLocale().getMessage("interface.button.pages")
-                    .processPlaceholder("amount", this.pages).getMessage());
-        }
-
-        for (Module module : this.registeredModules) {
-            this.description.add(module.getDescription());
-        }
+        if (autoSmelt)
+            this.description.add(locale.getMessage("interface.automator.autosmelt")
+                    .processPlaceholder("autosmelt", autoSmelt).getMessage());
     }
 
     public List<String> getDescription() {
@@ -67,22 +72,6 @@ public class Level {
         return this.level;
     }
 
-    public int getRadius() {
-        return this.radius;
-    }
-
-    public boolean isAutoReplant() {
-        return this.autoReplant;
-    }
-
-    public int getPages() {
-        return this.pages;
-    }
-
-    public double getSpeedMultiplier() {
-        return this.speedMultiplier;
-    }
-
     public int getCostExperience() {
         return this.costExperience;
     }
@@ -91,17 +80,35 @@ public class Level {
         return this.costEconomy;
     }
 
-    public ArrayList<Module> getRegisteredModules() {
-        return new ArrayList<>(this.registeredModules);
+    public double getSpeedMultiplier() {
+        return this.speedMultiplier;
     }
 
-    public void addModule(Module module) {
-        this.registeredModules.add(module);
-        buildDescription();
+    public int getMaxDistance() {
+        return this.maxDistance;
     }
 
-    public Module getModule(String name) {
-        return this.registeredModules == null ? null :
-                this.registeredModules.stream().filter(module -> module.getName().equals(name)).findFirst().orElse(null);
+    public boolean isAutoPickup() {
+        return this.autoPickup;
+    }
+
+    public int getMaxBlocks() {
+        return this.maxBlocks;
+    }
+
+    public int getDamage() {
+        return this.damage;
+    }
+
+    public Color getColor() {
+        return this.color;
+    }
+
+    public boolean isCrops() {
+        return this.crops;
+    }
+
+    public boolean isAutoSmelt() {
+        return this.autoSmelt;
     }
 }

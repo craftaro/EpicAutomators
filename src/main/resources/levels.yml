@@ -1,49 +1,46 @@
 Level-1:
-  Radius: 1
+  Color: "#FF5F00"
+  Max-Blocks: 3
+  Max-Distance: 15
   Speed-Multiplier: 1
   Cost-xp: 20
   Cost-eco: 5000
 Level-2:
-  Radius: 2
+  Color: "#8B00FF"
+  Max-Blocks: 4
+  Max-Distance: 25
   Speed-Multiplier: 1.5
-  Auto-Harvest: true
   Cost-xp: 20
   Cost-eco: 5000
 Level-3:
-  Radius: 3
-  Speed-Multiplier: 1.5
-  Auto-Harvest: true
-  Auto-Replant: true
-  Auto-Breeding: 5
+  Color: "#00FF7F"
+  Max-Blocks: 4
+  Max-Distance: 35
+  Damage: 4
+  Speed-Multiplier: 2
+  Auto-Pickup: true
+  Crops: true
   Cost-xp: 25
   Cost-eco: 7500
 Level-4:
-  Radius: 3
-  Speed-Multiplier: 2
-  Auto-Harvest: true
-  Auto-Replant: true
-  Auto-Breeding: 10
-  Auto-Butcher: 25
-  Pages: 2
+  Color: "#FFD700"
+  Max-Blocks: 5
+  Max-Distance: 45
+  Damage: 6
+  Speed-Multiplier: 2.5
+  Auto-Pickup: true
+  Auto-Smelt: true
+  Crops: true
   Cost-xp: 30
   Cost-eco: 10000
 Level-5:
-  Radius: 3
-  Speed-Multiplier: 2.5
-  Auto-Harvest: true
-  Auto-Replant: true
-  Auto-Breeding: 15
-  Auto-Butcher: 20
-  Pages: 2
+  Color: "#00BFFF"
+  Max-Blocks: 6
+  Max-Distance: 55
+  Damage: 8
+  Speed-Multiplier: 3
+  Auto-Pickup: true
+  Auto-Smelt: true
+  Crops: true
   Cost-xp: 35
   Cost-eco: 12000
-Level-6:
-  Radius: 4
-  Speed-Multiplier: 3
-  Auto-Harvest: true
-  Auto-Replant: true
-  Auto-Breeding: 20
-  Auto-Butcher: 15
-  Pages: 2
-  Cost-xp: 40
-  Cost-eco: 25000

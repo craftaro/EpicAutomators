@@ -1,8 +1,8 @@
-package com.craftaro.epicfurnaces.commands;
+package com.songoda.epicautomators.commands;
 
 import com.craftaro.core.commands.AbstractCommand;
-import com.craftaro.epicfurnaces.level.Level;
-import com.craftaro.epicfurnaces.EpicFurnaces;
+import com.songoda.epicautomators.EpicAutomators;
+import com.songoda.epicautomators.automator.levels.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 public class CommandGive extends AbstractCommand {
-    private final EpicFurnaces plugin;
+    private final EpicAutomators plugin;
 
-    public CommandGive(EpicFurnaces plugin) {
+    public CommandGive(EpicAutomators plugin) {
         super(CommandType.CONSOLE_OK, "give");
         this.plugin = plugin;
     }
@@ -48,7 +48,7 @@ public class CommandGive extends AbstractCommand {
         } else if (args.length != 0) {
             level = this.plugin.getLevelManager().getLevel(Integer.parseInt(args[1]));
         }
-        player.getInventory().addItem(this.plugin.createLeveledFurnace(Material.FURNACE, level.getLevel(), 0));
+        player.getInventory().addItem(plugin.createLeveledAutomator(level.getLevel()));
         this.plugin.getLocale().getMessage("command.give.success")
                 .processPlaceholder("level", level.getLevel()).sendPrefixedMessage(sender);
 
@@ -62,7 +62,7 @@ public class CommandGive extends AbstractCommand {
 
     @Override
     public String getPermissionNode() {
-        return "epicfurnaces.admin.give";
+        return "epicautomators.admin.give";
     }
 
     @Override
@@ -72,6 +72,6 @@ public class CommandGive extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return "Give a leveled furnace to a player.";
+        return "Give a leveled automator to a player.";
     }
 }

@@ -1,4 +1,4 @@
-package com.craftaro.epicfurnaces.utils;
+package com.songoda.epicautomators.utils;
 
 /**
  * Represents a cost type when making a purchase from EpicFurnaces

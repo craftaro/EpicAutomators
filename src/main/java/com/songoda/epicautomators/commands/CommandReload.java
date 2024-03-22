@@ -1,21 +1,21 @@
-package com.craftaro.epicfurnaces.commands;
+package com.songoda.epicautomators.commands;
 
 import com.craftaro.core.commands.AbstractCommand;
-import com.craftaro.epicfurnaces.EpicFurnaces;
+import com.songoda.epicautomators.EpicAutomators;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
 public class CommandReload extends AbstractCommand {
-    private final EpicFurnaces plugin;
+    private final EpicAutomators plugin;
 
-    public CommandReload(EpicFurnaces plugin) {
+    public CommandReload(EpicAutomators plugin) {
         super(CommandType.CONSOLE_OK, "reload");
         this.plugin = plugin;
     }
 
     @Override
-    protected AbstractCommand.ReturnType runCommand(CommandSender sender, String... args) {
+    protected ReturnType runCommand(CommandSender sender, String... args) {
         this.plugin.reloadConfig();
         this.plugin.getLocale().getMessage("&7Configuration and Language files reloaded.").sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;
@@ -28,7 +28,7 @@ public class CommandReload extends AbstractCommand {
 
     @Override
     public String getPermissionNode() {
-        return "epicfurnaces.admin.reload";
+        return "epicautomators.admin.reload";
     }
 
     @Override

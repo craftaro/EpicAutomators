@@ -1,18 +1,14 @@
-name: UltimateRepairing
+name: EpicAutomators
 description: UltimateRepairing
-main: com.craftaro.ultimaterepairing.UltimateRepairing
-softdepend: [ HolographicDisplays, Vault ]
+main: com.songoda.epicautomators.EpicAutomators
+softdepend: [ HolographicDisplays, Vault, EpicHoppers ]
 version: maven-version-number
-author: Craftaro
+author: Songoda
 api-version: 1.13
 
 commands:
-  ur:
+  epicautomators:
     description: View information on this plugin.
     default: true
-    aliases: [ UltimateRepairing ]
-    usage: /ur
-  uranvil:
-    description: View information on this plugin.
-    default: true
-    usage: /uranvil
+    aliases: [ ea ]
+    usage: /ea

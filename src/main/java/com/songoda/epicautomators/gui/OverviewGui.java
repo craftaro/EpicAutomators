@@ -1,58 +1,63 @@
-package com.craftaro.epicfarming.gui;
+package com.songoda.epicautomators.gui;
 
 import com.craftaro.core.gui.CustomizableGui;
 import com.craftaro.core.gui.GuiUtils;
-import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.core.utils.NumberUtils;
-import com.craftaro.core.utils.TextUtils;
-import com.craftaro.core.utils.TimeUtils;
-import com.craftaro.epicfarming.EpicFarming;
-import com.craftaro.epicfarming.boost.BoostData;
-import com.craftaro.epicfarming.farming.Farm;
-import com.craftaro.epicfarming.farming.FarmType;
-import com.craftaro.epicfarming.farming.UpgradeType;
-import com.craftaro.epicfarming.farming.levels.Level;
-import com.craftaro.epicfarming.farming.levels.modules.Module;
-import com.craftaro.epicfarming.settings.Settings;
-import com.craftaro.epicfarming.utils.Methods;
+import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
+import com.songoda.epicautomators.EpicAutomators;
+import com.songoda.epicautomators.automator.Automator;
+import com.songoda.epicautomators.automator.levels.Level;
+import com.songoda.epicautomators.settings.Settings;
+import com.songoda.epicautomators.utils.CostType;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class OverviewGui extends CustomizableGui {
-    private final EpicFarming plugin;
-    private final Farm farm;
-    private final Level level;
+    private final EpicAutomators plugin;
+    private final Automator automator;
     private final Player player;
 
     private int task;
+    static int[][] infoIconOrder = new int[][]{{22}, {21, 23}, {21, 22, 23}, {12, 21, 22, 23}, {12, 14, 21, 22, 23}, {3, 12, 14, 21, 22, 23}, {3, 5, 12, 14, 21, 22, 23}};
 
-    public OverviewGui(Farm farm, Player player) {
-        super(EpicFarming.getPlugin(EpicFarming.class), "overview");
-        this.plugin = EpicFarming.getPlugin(EpicFarming.class);
+    public OverviewGui(Automator automator, Player player) {
+        super(EpicAutomators.getPlugin(EpicAutomators.class), "main");
+        this.plugin = EpicAutomators.getPlugin(EpicAutomators.class);
 
-        this.farm = farm;
-        this.level = farm.getLevel();
+        this.automator = automator;
         this.player = player;
-        this.setRows(6);
-        this.setTitle(Methods.formatName(this.level.getLevel()));
-        this.setAcceptsItems(true);
-        this.setUnlockedRange(3, 0, 5, 8);
 
+        showPage();
+        setRows(6);
+        setUnlockedRange(3, 0, 5, 8);
+
+        setOnOpen((event) -> {
+            updateInventory();
+            automator.setGuiActive(true);
+        });
+        setDefaultAction((event) ->
+                Bukkit.getScheduler().runTaskLater(this.plugin, this::updateAutomator, 0L));
+        runTask();
+        setOnClose((event) -> {
+            updateAutomator();
+            automator.setGuiActive(false);
+            Bukkit.getScheduler().cancelTask(this.task);
+        });
+        setDefaultItem(null);
+
+        setTitle(plugin.formatName(automator.getLevel().getLevel()));
+        setAcceptsItems(true);
+    }
+
+    private void showPage() {
         ItemStack glass1 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_1.getMaterial());
         ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial());
         ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial());
 
-        this.setDefaultItem(null);
 
         mirrorFill("mirrorfill_1", 0, 0, false, true, glass2);
         mirrorFill("mirrorfill_2", 0, 1, false, true, glass2);
@@ -70,193 +75,232 @@ public class OverviewGui extends CustomizableGui {
         mirrorFill("mirrorfill_13", 2, 3, false, true, glass1);
         mirrorFill("mirrorfill_14", 2, 4, false, false, glass1);
 
-        // enable page events
-        if (this.level.getPages() > 1) {
-            setPages(this.level.getPages());
-            setPrevPage(2, 0, GuiUtils.createButtonItem(XMaterial.ARROW, this.plugin.getLocale().getMessage("general.interface.previous").getMessage()));
-            setNextPage(2, 8, GuiUtils.createButtonItem(XMaterial.ARROW, this.plugin.getLocale().getMessage("general.interface.next").getMessage()));
-            setOnPage((event) -> updateInventory());
-        }
 
-        // events
-        this.setOnOpen((event) -> updateInventory());
-        this.setDefaultAction((event) ->
-                Bukkit.getScheduler().runTaskLater(this.plugin, this::updateFarm, 0L));
-        runTask();
-        this.setOnClose((event) -> {
-            updateFarm();
-            farm.close();
-            Bukkit.getScheduler().cancelTask(this.task);
-        });
+        Level level = automator.getLevel();
+        Level nextLevel = plugin.getLevelManager().getHighestLevel().getLevel() > level.getLevel() ? this.plugin.getLevelManager().getLevel(level.getLevel() + 1) : null;
 
-        showPage();
-    }
+        // main automator information icon
+        setItem("information", 1, 4, GuiUtils.createButtonItem(
+                Settings.AUTOMATOR_ITEM.getMaterial(XMaterial.OBSIDIAN),
+                plugin.getLocale().getMessage("interface.automator.currentlevel")
+                        .processPlaceholder("level", level.getLevel()).getMessage(),
+                getAutomatorDescription(nextLevel)));
 
-    private void showPage() {
-        Level nextLevel = this.plugin.getLevelManager().getHighestLevel().getLevel() > this.level.getLevel() ? this.plugin.getLevelManager().getLevel(this.level.getLevel() + 1) : null;
-
-        List<String> farmLore = this.level.getDescription();
-        farmLore.add("");
-        if (nextLevel == null) {
-            farmLore.add(this.plugin.getLocale().getMessage("event.upgrade.maxed").getMessage());
-        } else {
-            farmLore.add(this.plugin.getLocale().getMessage("interface.button.level")
-                    .processPlaceholder("level", nextLevel.getLevel()).getMessage());
-            farmLore.addAll(nextLevel.getDescription());
-        }
-
-        BoostData boostData = this.plugin.getBoostManager().getBoost(this.farm.getPlacedBy());
-        if (boostData != null) {
-            String[] parts = this.plugin.getLocale().getMessage("interface.button.boostedstats")
-                    .processPlaceholder("amount", Integer.toString(boostData.getMultiplier()))
-                    .processPlaceholder("time", TimeUtils.makeReadable(boostData.getEndTime() - System.currentTimeMillis()))
-                    .getMessage().split("\\|");
-            farmLore.add("");
-            for (String line : parts) {
-                farmLore.add(TextUtils.formatText(line));
-            }
-        }
-
-        setItem("farm", 13, GuiUtils.createButtonItem(Settings.FARM_BLOCK_MATERIAL.getMaterial(XMaterial.END_ROD),
-                this.plugin.getLocale().getMessage("general.nametag.farm")
-                        .processPlaceholder("level", this.level.getLevel()).getMessage(),
-                farmLore));
-
-        if (this.player != null && Settings.UPGRADE_WITH_XP.getBoolean() && this.player.hasPermission("EpicFarming.Upgrade.XP")) {
-
-            setButton("xp", 11, GuiUtils.createButtonItem(Settings.XP_ICON.getMaterial(XMaterial.EXPERIENCE_BOTTLE),
-                            this.plugin.getLocale().getMessage("interface.button.upgradewithxp").getMessage(),
+        if (Settings.UPGRADE_WITH_XP.getBoolean()
+                && level.getCostExperience() != -1
+                && player.hasPermission("EpicAutomators.Upgrade.XP")) {
+            setButton("upgrade_xp", 1, 2, GuiUtils.createButtonItem(
+                            Settings.XP_ICON.getMaterial(XMaterial.EXPERIENCE_BOTTLE),
+                            plugin.getLocale().getMessage("interface.automator.upgradewithxp").getMessage(),
                             nextLevel != null
-                                    ? this.plugin.getLocale().getMessage("interface.button.upgradewithxplore")
+                                    ? plugin.getLocale().getMessage("interface.automator.upgradewithxplore")
                                     .processPlaceholder("cost", nextLevel.getCostExperience()).getMessage()
-                                    : this.plugin.getLocale().getMessage("event.upgrade.maxed").getMessage()),
-                    event -> {
-                        this.farm.upgrade(UpgradeType.EXPERIENCE, this.player);
-                        onClose(this.guiManager, this.player);
-                        this.farm.view(this.player, true);
+                                    : plugin.getLocale().getMessage("interface.automator.alreadymaxed").getMessage()),
+                    (event) -> {
+                        automator.upgrade(this.player, CostType.EXPERIENCE);
+                        showPage();
                     });
         }
 
-        if (Settings.UPGRADE_WITH_ECONOMY.getBoolean() && this.player != null && this.player.hasPermission("EpicFarming.Upgrade.ECO")) {
-
-            setButton("eco", 15, GuiUtils.createButtonItem(Settings.ECO_ICON.getMaterial(XMaterial.SUNFLOWER),
-                    this.plugin.getLocale().getMessage("interface.button.upgradewitheconomy").getMessage(),
-                    nextLevel != null
-                            ? this.plugin.getLocale().getMessage("interface.button.upgradewitheconomylore")
-                            .processPlaceholder("cost", NumberUtils.formatNumber(nextLevel.getCostEconomy())).getMessage()
-                            : this.plugin.getLocale().getMessage("event.upgrade.maxed").getMessage()), (event) -> {
-                this.farm.upgrade(UpgradeType.ECONOMY, this.player);
-                onClose(this.guiManager, this.player);
-                this.farm.view(this.player, true);
-            });
+        if (Settings.UPGRADE_WITH_ECONOMY.getBoolean()
+                && level.getCostEconomy() != -1
+                && this.player.hasPermission("EpicAutomators.Upgrade.ECO")) {
+            setButton("upgrade_economy", 1, 6, GuiUtils.createButtonItem(
+                            Settings.ECO_ICON.getMaterial(XMaterial.SUNFLOWER),
+                            this.plugin.getLocale().getMessage("interface.automator.upgradewitheconomy").getMessage(),
+                            nextLevel != null
+                                    ? this.plugin.getLocale().getMessage("interface.automator.upgradewitheconomylore")
+                                    .processPlaceholder("cost", NumberUtils.formatNumber(nextLevel.getCostEconomy())).getMessage()
+                                    : this.plugin.getLocale().getMessage("interface.automator.alreadymaxed").getMessage()),
+                    (event) -> {
+                        automator.upgrade(this.player, CostType.ECONOMY);
+                        showPage();
+                    });
         }
 
-        Material farmTypeMaterial = XMaterial.WHEAT.parseMaterial();
-        if (this.farm.getFarmType() == FarmType.LIVESTOCK) {
-            farmTypeMaterial = XMaterial.BEEF.parseMaterial();
-        } else if (this.farm.getFarmType() == FarmType.BOTH) {
-            farmTypeMaterial = XMaterial.GOLD_NUGGET.parseMaterial();
+        int num = -2;
+        if (level.getSpeedMultiplier() != 0)
+            num++;
+        if (level.isAutoPickup())
+            num++;
+        if (level.getMaxDistance() != 0)
+            num++;
+        if (level.getMaxBlocks() != 0)
+            num++;
+        if (level.getDamage() > 1)
+            num++;
+        if (level.isCrops())
+            num++;
+        if (level.isAutoSmelt())
+            num++;
+
+        int current = 0;
+
+        if (level.getMaxDistance() != 0) {
+            setButton("distance", infoIconOrder[num][current++], GuiUtils.createButtonItem(
+                            Settings.DISTANCE_ICON.getMaterial(XMaterial.COMPASS),
+                            this.plugin.getLocale().getMessage("interface.automator.distancetitle").getMessage(),
+                            this.plugin.getLocale().getMessage("interface.automator.distanceinfo")
+                                    .processPlaceholder("amount", automator.getLaserDistance()).getMessage().split("\\|")),
+                    event -> {
+                        int strength = automator.getLaserDistance();
+                        if (event.clickType.isRightClick()) {
+                            if (strength < level.getMaxDistance())
+                                automator.setLaserDistance(strength + 5);
+                        } else {
+                            if (strength > 5)
+                                automator.setLaserDistance(strength - 5);
+                        }
+                        automator.save("laser_distance");
+                        showPage();
+                    });
         }
 
-        ItemStack farmType = new ItemStack(farmTypeMaterial, 1);
-        ItemMeta farmTypeMeta = farmType.getItemMeta();
-        farmTypeMeta.setDisplayName(this.plugin.getLocale().getMessage("interface.button.farmtype")
-                .processPlaceholder("type", this.farm.getFarmType().translate())
-                .getMessage());
-        farmTypeMeta.setLore(Collections.singletonList(this.plugin.getLocale().getMessage("interface.button.farmtypelore")
-                .getMessage()));
-        farmType.setItemMeta(farmTypeMeta);
-
-        Map<Integer, Integer[]> layouts = new HashMap<>();
-        layouts.put(1, new Integer[]{22});
-        layouts.put(2, new Integer[]{22, 4});
-        layouts.put(3, new Integer[]{22, 3, 5});
-        layouts.put(4, new Integer[]{23, 3, 5, 21});
-        layouts.put(5, new Integer[]{23, 3, 5, 21, 22});
-        layouts.put(6, new Integer[]{23, 3, 4, 5, 21, 22});
-        layouts.put(7, new Integer[]{23, 3, 4, 5, 21, 22, 12});
-        layouts.put(8, new Integer[]{23, 3, 4, 5, 21, 22, 12, 14});
-        layouts.put(9, new Integer[]{23, 3, 4, 5, 21, 22, 12, 14, 20});
-        layouts.put(10, new Integer[]{23, 3, 4, 5, 21, 22, 12, 14, 20, 24});
-
-        List<Module> modules = this.level.getRegisteredModules().stream().filter(module ->
-                module.getGUIButton(this.farm) != null).collect(Collectors.toList());
-
-        int amount = modules.size();
-
-        if (amount > 0) {
-            amount++;
+        if (level.getMaxBlocks() != 0) {
+            setButton("blocks", infoIconOrder[num][current++], GuiUtils.createButtonItem(
+                            Settings.BLOCKS_ICON.getMaterial(XMaterial.STONE),
+                            this.plugin.getLocale().getMessage("interface.automator.blockstitle").getMessage(),
+                            this.plugin.getLocale().getMessage("interface.automator.blocksinfo")
+                                    .processPlaceholder("amount", automator.getMaxBlocks()).getMessage().split("\\|")),
+                    event -> {
+                        int strength = automator.getMaxBlocks();
+                        if (event.clickType.isRightClick()) {
+                            if (strength < level.getMaxBlocks())
+                                automator.setMaxBlocks(strength + 1);
+                        } else {
+                            if (strength > 0)
+                                automator.setMaxBlocks(strength - 1);
+                        }
+                        automator.save("max_blocks");
+                        showPage();
+                    });
         }
 
-        Integer[] layout = layouts.get(amount);
+        if (level.isAutoPickup()) {
+            setButton("auto_pickup", infoIconOrder[num][current++], GuiUtils.createButtonItem(
+                            Settings.AUTO_PICKUP_ICON.getMaterial(XMaterial.HOPPER),
+                            this.plugin.getLocale().getMessage("interface.automator.autopickuptitle").getMessage(),
+                            this.plugin.getLocale().getMessage("interface.automator.autopickupinfo")
+                                    .processPlaceholder("status", automator.isAutoPickup() ? plugin.getLocale().getMessage("on").getMessage()
+                                            : plugin.getLocale().getMessage("off").getMessage()).getMessage().split("\\|")),
+                    event -> {
+                        automator.setAutoPickup(!automator.isAutoPickup());
+                        automator.save("auto_pickup");
+                        showPage();
+                    });
+        }
 
-        for (int i = 0; i < amount; i++) {
-            int slot = layout[i];
-            if (i == 0 && this.level.getRegisteredModules().stream().map(Module::getName).anyMatch(s -> s.equals("AutoCollect"))) {
-                if (this.level.getRegisteredModules().stream().map(Module::getName).anyMatch(s -> s.equals("AutoButcher")
-                        || s.equals("AutoBreeding"))) {
-                    setButton("toggle", slot, farmType,
-                            (event) -> {
-                                this.farm.toggleFarmType();
-                                if (this.farm.getFarmType() != FarmType.LIVESTOCK) {
-                                    this.farm.tillLand();
-                                }
-                                showPage();
-                            });
-                }
-            } else {
-                if (modules.isEmpty()) {
-                    break;
-                }
+        if (level.getDamage() > 1) {
+            setButton("damage", infoIconOrder[num][current++], GuiUtils.createButtonItem(
+                            Settings.DAMAGE_ICON.getMaterial(XMaterial.DIAMOND_SWORD),
+                            this.plugin.getLocale().getMessage("interface.automator.damagetitle").getMessage(),
+                            this.plugin.getLocale().getMessage("interface.automator.damageinfo")
+                                    .processPlaceholder("status", automator.doesDamage() ? plugin.getLocale().getMessage("on").getMessage()
+                                            : plugin.getLocale().getMessage("off").getMessage()).getMessage().split("\\|")),
+                    event -> {
+                        automator.setDoesDamage(!automator.doesDamage());
+                        automator.save("does_damage");
+                        showPage();
+                    });
+        }
 
-                Module module = modules.get(0);
-                modules.remove(module);
-                setButton("module_" + module.getName().toLowerCase(), slot, module.getGUIButton(this.farm),
-                        (event) -> module.runButtonPress(this.player, this.farm, event.clickType));
-            }
+        if (level.isCrops()) {
+            setButton("crops", infoIconOrder[num][current++], GuiUtils.createButtonItem(
+                            Settings.CROPS_ICON.getMaterial(XMaterial.WHEAT),
+                            this.plugin.getLocale().getMessage("interface.automator.cropstitle").getMessage(),
+                            this.plugin.getLocale().getMessage("interface.automator.cropsinfo")
+                                    .processPlaceholder("harvesting", automator.isAutoHarvest() ? plugin.getLocale().getMessage("on").getMessage()
+                                            : plugin.getLocale().getMessage("off").getMessage())
+                                    .processPlaceholder("replant", automator.isReplant() ? plugin.getLocale().getMessage("on").getMessage()
+                                            : plugin.getLocale().getMessage("off").getMessage()).getMessage().split("\\|")),
+                    event -> {
+                        if (event.clickType.isLeftClick()) {
+                            automator.setCrops(!automator.isAutoHarvest());
+                            automator.save("crops");
+                        } else if (event.clickType.isRightClick()) {
+                            automator.setReplant(!automator.isReplant());
+                            automator.save("replant");
+                        }
+
+                        showPage();
+                    });
+        }
+
+        if (level.isAutoSmelt()) {
+            setButton("auto_smelt", infoIconOrder[num][current++], GuiUtils.createButtonItem(
+                            Settings.AUTO_SMELT_ICON.getMaterial(XMaterial.FURNACE),
+                            this.plugin.getLocale().getMessage("interface.automator.autosmelttitle").getMessage(),
+                            this.plugin.getLocale().getMessage("interface.automator.autosmeltinfo")
+                                    .processPlaceholder("status", automator.isAutoSmelt() ? plugin.getLocale().getMessage("on").getMessage()
+                                            : plugin.getLocale().getMessage("off").getMessage()).getMessage().split("\\|")),
+                    event -> {
+                        automator.setAutoSmelt(!automator.isAutoSmelt());
+                        automator.save("auto_smelt");
+                        showPage();
+                    });
+        }
+
+        if (!automator.isRunning() && !automator.isFueled()) {
+            setItem(4, GuiUtils.createButtonItem(XMaterial.YELLOW_DYE, plugin.getLocale()
+                    .getMessage("interface.automator.nofuel").getMessage()));
+        } else {
+            XMaterial material = automator.isRunning() ? XMaterial.REDSTONE_BLOCK : XMaterial.EMERALD_BLOCK;
+            setButton(4, GuiUtils.createButtonItem(material, automator.isRunning() ? plugin.getLocale()
+                            .getMessage("interface.automator.stop").getMessage() : plugin.getLocale()
+                            .getMessage("interface.automator.start").getMessage()),
+                    event -> {
+                        automator.setRunning(!automator.isRunning());
+                        automator.save("running");
+                        showPage();
+                    });
         }
     }
 
     private void runTask() {
         this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, () -> {
-            updateFarm();
+            updateAutomator();
             showPage();
         }, 2L, 1L);
     }
 
     public void updateInventory() {
-        List<ItemStack> items = this.farm.getItems();
+        ItemStack[] inventory = automator.getInventory();
+        for (int i = 0; i < 27; ++i)
+            setItem(i + 27, inventory[i]);
+        automator.setWasUpdated(false);
+    }
 
-        int j = (this.page - 1) * 27;
-        for (int i = 27; i <= 54; ++i) {
-            if (items.size() <= j) {
-                setItem(i, null);
-            } else {
-                setItem(i, items.get(j));
+    public void updateAutomator() {
+        if (automator.wasUpdated())
+            return;
+
+        boolean wasUpdated = false;
+        ItemStack[] inventory = automator.getInventory();
+        for (int i = 0; i < 27; ++i) {
+            ItemStack item = getItem(i + 27);
+            if (item == null || !item.equals(inventory[i])) {
+                wasUpdated = true;
+                inventory[i] = item;
             }
-
-            ++j;
+        }
+        if (wasUpdated) {
+            automator.setInventory(inventory);
+            automator.save("inventory");
         }
     }
 
-    private void updateFarm() {
-        List<ItemStack> items = new ArrayList<>();
-        int start = 27 * (this.page - 1);
-        int j = 27;
-        for (int i = 0; i <= 27 * this.pages; i++) {
-            if (i >= start && i < start + 27) {
-                ItemStack item = getItem(j);
-                j++;
-                if (item != null && item.getType() != Material.AIR) {
-                    items.add(item);
-                }
-            } else {
-                if (i >= this.farm.getItems().size()) {
-                    continue;
-                }
-                items.add(this.farm.getItems().get(i));
-            }
+    private List<String> getAutomatorDescription(Level nextLevel) {
+        Level level = automator.getLevel();
+        ArrayList<String> lore = new ArrayList<>();
+        lore.addAll(level.getDescription());
+        lore.add("");
+        if (nextLevel == null) {
+            lore.add(plugin.getLocale().getMessage("interface.automator.alreadymaxed").getMessage());
+        } else {
+            lore.add(plugin.getLocale().getMessage("interface.automator.level")
+                    .processPlaceholder("level", nextLevel.getLevel()).getMessage());
+            lore.addAll(nextLevel.getDescription());
         }
-        this.farm.setItems(items);
+        return lore;
     }
 }

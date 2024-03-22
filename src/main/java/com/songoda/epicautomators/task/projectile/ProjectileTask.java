@@ -1,33 +1,36 @@
-package com.songoda.epicautomators.task;
+package com.songoda.epicautomators.task.projectile;
 
 import com.songoda.epicautomators.EpicAutomators;
 import com.songoda.epicautomators.automator.Automator;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.block.BlockFace;
 import org.bukkit.scheduler.BukkitRunnable;
-import java.util.Random;
 
-public class IdleTask extends BukkitRunnable {
+import java.util.HashSet;
+import java.util.Set;
+
+public class ProjectileTask extends BukkitRunnable {
     private final EpicAutomators plugin;
-    private final Random random = new Random();
+    private final Set<Projectile> projectiles = new HashSet<>();
 
-    public IdleTask(EpicAutomators plugin) {
+    public ProjectileTask(EpicAutomators plugin) {
         this.plugin = plugin;
-        runTaskTimer(plugin, 0L, 8L);
+
+        runTaskTimer(plugin, 0L, 1L);
+    }
+
+    public void add(Automator automator) {
+        Projectile projectile = new Projectile(automator);
+        projectiles.add(projectile);
     }
 
     @Override
     public void run() {
-        if (random.nextInt(100) < 30)
-            return;
-
-        for (Automator automator : plugin.getAutomatorManager().getAutomators().values()) {
-            if (!automator.isInLoadedChunk())
-                continue;
-
-            if (!automator.isRunning())
-                    automator.blast();
+        Set<Projectile> toRemove = new HashSet<>();
+        for (Projectile projectile : projectiles) {
+            if (!projectile.isActive())
+                toRemove.add(projectile);
+            else
+                projectile.tick();
         }
+        projectiles.removeAll(toRemove);
     }
 }

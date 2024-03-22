@@ -1,51 +1,58 @@
-package com.craftaro.epichoppers.containers.impl;
+package com.songoda.epicautomators.utils;
 
-import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
-import com.craftaro.epicfarming.EpicFarming;
-import com.craftaro.epicfarming.core.compatibility.CompatibleMaterial;
-import com.craftaro.epicfarming.farming.Farm;
+import com.craftaro.epichoppers.EpicHoppersApi;
 import com.craftaro.epichoppers.containers.CustomContainer;
 import com.craftaro.epichoppers.containers.IContainer;
+import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
+import com.songoda.epicautomators.EpicAutomators;
+import com.songoda.epicautomators.automator.Automator;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
-public class EpicFarmingImpl implements IContainer {
+import java.util.Arrays;
+
+public class EpicHoppersContainer implements IContainer {
+
+    public EpicHoppersContainer() {
+        EpicHoppersApi.getApi().getContainerManager().registerCustomContainerImplementation("EpicAutomators", this);
+    }
+
     @Override
     public CustomContainer getCustomContainer(Block block) {
         return new Container(block);
     }
 
     static class Container extends CustomContainer {
-        private final Farm farm;
+        private final Automator automator;
 
         public Container(Block block) {
-            this.farm = EpicFarming.getInstance().getFarmManager().getFarm(block);
+            this.automator = EpicAutomators.getInstance().getAutomatorManager().getAutomator(block.getLocation());
         }
 
         @Override
         public boolean addToContainer(ItemStack itemToMove) {
-            if (!this.farm.willFit(itemToMove)) {
+            if (!this.automator.hasRoomForItem(itemToMove)) {
                 return false;
             }
-            this.farm.addItem(itemToMove);
+            this.automator.addItem(itemToMove);
             return true;
         }
 
         @Override
         public ItemStack[] getItems() {
-            return this.farm.getItems()
-                    .stream().filter(item -> XMaterial.matchXMaterial(item) != XMaterial.BONE_MEAL)
+            return Arrays.stream(this.automator.getInventory())
+                    .filter(item -> item != null && !ItemUtils.isFuel(XMaterial.matchXMaterial(item)))
                     .toArray(ItemStack[]::new);
         }
 
         @Override
         public void removeFromContainer(ItemStack itemToMove, int amountToMove) {
-            this.farm.removeMaterial(itemToMove.getType(), amountToMove);
+            automator.removeItem(itemToMove, amountToMove);
         }
 
         @Override
         public boolean isContainer() {
-            return this.farm != null;
+            return this.automator != null;
         }
     }
 }

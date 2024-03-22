@@ -2,79 +2,55 @@
 
 general:
   nametag:
-    prefix: '&8[&6EpicFurnaces&8]'
-    next: '&9Next'
-    back: '&9Back'
-    exit: '&cExit'
-    nameformat: '&eLevel %level% &fFurnace'
-  hologram:
-    outoffuel: '&cNo Fuel'
-    stats: '&a%in%&7/&c%out%'
+    prefix: '&8[&aEpicAutomators&8]'
+    on: 'On'
+    off: 'Off'
+    automator: '&eLevel %level% &fAutomator'
 
 # Interface Messages
 
 interface:
-  furnace:
+  automator:
+    start: '&aStart'
+    stop: '&cStop'
     upgradewithxp: '&aUpgrade with XP'
     upgradewithxplore: '&7Cost: &a%cost% Levels'
     upgradewitheconomy: '&aUpgrade with ECO'
     upgradewitheconomylore: '&7Cost: &a$%cost%'
-    currentlevel: '&6Furnace Level &7%level%'
+    currentlevel: '&aAutomator Level &7%level%'
     level: '&6Next Level &7%level%'
-    performance: '&7Performance: &6%amount%'
-    reward: '&7Reward: &6%amount%'
-    performancetitle: '&a&lPerformance'
-    rewardtitle: '&c&lReward'
-    fueldurationtitle: '&7&lFuel Duration'
-    fuelduration: '&7Fuel Duration: &6%amount%'
-    fuelshare: '&7Fuel Share: &6%amount%&7'
-    fuelsharetitle: '&6&lFuel Share'
-    fuelshareinfo: '&7This furnace will power other|&7furnaces within a &6%amount%&7 block radius.'
-    overheat: '&7Overheat: &6%amount%&7'
-    overheattitle: '&6&lOverheat'
-    overheatinfo: '&7This furnace will melt snow |&7and ice within a &6%amount%&7 block radius.'
-    performanceinfo: '&7This furnaces performance is |&7currently boosted an extra &6%amount%%&7. | |&7Performance boosts the speed in |&7which a furnace processes |&7materials.'
-    rewardinfo: '&7This furnace currently |&7has a &6%amount%%&7 chance of |&7producing multiple resources.'
-    fueldurationinfo: '&7This furnaces fuel duration is |&7currently boosted by &6%amount%%&7. | |&7Fuel Duration boosts how long |&7fuel in the furnace lasts.'
-    smeltedx: '&7Smelted &6%amount% Materials&7'
-    itemsneeded: '&7You need one of the following to level up:'
-    neededitem: '&6%amount% %type%s'
-    remotefurnace: '&5&lRemote Control'
-    remotefurnacelore: '&7Left-Click to assign a nickname.|&7Right-Click to open the menu.|&7Current nickname is: &6%nickname%&7.'
-    utilize: '|&7To utilize remote access|&7use the command:|&6/EF Remote %nickname%'
-    remotelist: '&7Players with remote access:'
-    alreadymaxed: '&7This furnace is already maxed out!'
-  button:
-    boostedstats: '&a&lCurrently boosted!|&7Reward multiplied by &6%amount%x&7.|&7Expires in &6%time%&7.'
-  remoteaccess:
-    addplayertitle: '&aAdd Player'
-    playerinfo: '&7Click to remove this player.'
+    speed: '&7Speed: &6%speed%x'
+    damage: '&7Damage: &6%damage%'
+    maxdistance: '&7Max Distance: &6%distance%'
+    maxblocks: '&7Max Blocks: &6%blocks%'
+    autopickup: '&7Auto Pickup: &6%autopickup%'
+    autosmelt: '&7Auto Smelt: &6%autosmelt%'
+    crops: '&7Crops: &6%crops%'
+    nofuel: '&eOut of fuel...'
+    distancetitle: '&6&lDistance'
+    distanceinfo: '&7This automator will blast|&7within an &6%amount%&7 block distance.||&7Click to change the distance.'
+    blockstitle: '&6&lBlocks'
+    blocksinfo: '&7This automator will blast|&6%amount%&7 blocks.||&7Click to change the blocks.'
+    damagetitle: '&6&lDamage'
+    damageinfo: '&7This automator will automatically|&7damage entities.||&7Currently: &6%status%|&7Click to toggle.'
+    autopickuptitle: '&6&lAuto Pickup'
+    autopickupinfo: '&7This automator will automatically|&7pickup items.||&7Currently: &6%status%|&7Click to toggle.'
+    cropstitle: '&6&lCrops'
+    cropsinfo: '&7This automator will automatically|&7harvest crops.||&7Harvesting: &6%harvesting%|&7Left-Click to toggle.||&7Auto Replant: &6%replant%|&7Right-Click to toggle.'
+    autosmelttitle: '&6&lAuto Smelt'
+    autosmeltinfo: '&7This automator will automatically|&7smelt mined ores.||&7Currently: &6%status%|&7Click to toggle.'
+    alreadymaxed: '&7This automator is already maxed out!'
 
 # Command Messages
 
 command:
   give:
-    success: '&7You have been given a &6level %level% &7Furnace.'
+    success: '&7You have been given a &6level %level% &7automator item.'
 
 # Event Messages
 
 event:
-  general:
-    nopermission: '&cYou do not have permission to do that.'
-    protected: '&cThis furnace is protected. You cannot access it.'
   upgrade:
     cannotafford: '&cYou cannot afford this upgrade.'
-    success: '&7You successfully upgraded this furnace to &6level %level%&7!'
-    maxed: '&7You maxed out this furnace at &6level %level%&7.'
-  remote:
-    enter: '&7Enter a unique nickname for the furnace.'
-    notfound: '&cRemote furnace not found.'
-    notloaded: '&cThat furnace isn''t in a loaded chunk...'
-    nicknamesuccess: '&aNickname set successfully.'
-    nicknameinuse: '&cThat nickname is already in use.'
-    enterplayer: '&7Enter a player to add to this furnace.'
-    playeralreadyadded: '&cThis player has already been added to this furnace.'
-    playeradded: '&aPlayer successfully added!'
-    invalidplayer: '&cInvalid player. Are they online?'
-  limit:
-    hit: '&7You can only have &6%limit% &7furnaces at a single time.'
+    success: '&7You successfully upgraded this automator to &6level %level%&7!'
+    maxed: '&7You maxed out this automator at &6level %level%&7.'

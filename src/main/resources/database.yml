@@ -1,0 +1,29 @@
+# The type of database to use. Supported values: H2, MYSQL, SQLITE, MARIADB
+type: H2
+
+# The hostname or IP address of the database server (for MySQL and MariaDB)
+host: localhost
+
+# The port number of the database server (for MySQL and MariaDB)
+port: 3306
+
+# The name of the database to connect to
+database: epicautomators
+
+# The username to authenticate with the database (for MySQL and MariaDB)
+username: root
+
+# The password to authenticate with the database (for MySQL and MariaDB)
+password: ""
+
+# The path to the database file (for H2 and SQLite)
+file: epicautomators
+
+# Whether to use SSL encryption for the database connection (for MySQL and MariaDB)
+useSSL: false
+
+# Whether to enable auto-reconnect for the database connection (for MySQL and MariaDB)
+autoReconnect: true
+
+# The maximum number of connections to the database
+poolSize: 10

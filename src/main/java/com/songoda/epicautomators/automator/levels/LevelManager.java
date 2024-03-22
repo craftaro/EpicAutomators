@@ -1,19 +1,15 @@
-package com.craftaro.epicfarming.farming.levels;
+package com.songoda.epicautomators.automator.levels;
 
-import com.craftaro.epicfarming.farming.levels.modules.Module;
+import com.songoda.epicautomators.automator.Automator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class LevelManager {
 
     private final NavigableMap<Integer, Level> registeredLevels = new TreeMap<>();
 
-    public void addLevel(int level, int costExperience, int costEconomy, double speedMultiplier, int radius, boolean autoCollect, boolean autoReplant, int pages, ArrayList<Module> modules) {
-        this.registeredLevels.put(level, new Level(level, costExperience, costEconomy, speedMultiplier, radius, autoReplant, pages, modules));
+    public void addLevel(Level level) {
+        this.registeredLevels.put(level.getLevel(), level);
     }
 
     public Level getLevel(int level) {
