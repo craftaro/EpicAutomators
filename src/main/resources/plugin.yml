@@ -1,5 +1,5 @@
 name: EpicAutomators
-description: UltimateRepairing
+description: EpicAutomators
 main: com.songoda.epicautomators.EpicAutomators
 softdepend: [ HolographicDisplays, Vault, EpicHoppers ]
 version: maven-version-number

@@ -20,6 +20,7 @@ import com.songoda.epicautomators.listeners.EntityListeners;
 import com.songoda.epicautomators.settings.Settings;
 import com.songoda.epicautomators.task.AutomationTask;
 import com.songoda.epicautomators.task.HopperTask;
+import com.songoda.epicautomators.task.projectile.IdleTask;
 import com.songoda.epicautomators.task.projectile.ProjectileTask;
 import com.songoda.epicautomators.utils.EpicHoppersContainer;
 import org.bukkit.Bukkit;
@@ -83,6 +84,9 @@ public class EpicAutomators extends SongodaPlugin {
 
         automationTask = new AutomationTask(this);
         projectileTask = new ProjectileTask(this);
+
+        if (Settings.SHOW_IDLE_PARTICLES.getBoolean())
+            new IdleTask(this);
 
         if (Bukkit.getPluginManager().isPluginEnabled("EpicHoppers")) {
             new EpicHoppersContainer();
