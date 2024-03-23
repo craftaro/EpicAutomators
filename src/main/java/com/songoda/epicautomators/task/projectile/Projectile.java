@@ -1,5 +1,6 @@
 package com.songoda.epicautomators.task.projectile;
 
+import com.craftaro.core.compatibility.CompatibleParticleHandler;
 import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.hooks.ProtectionManager;
 import com.craftaro.core.utils.BlockUtils;
@@ -23,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+import java.awt.Color;
 import java.util.Collection;
 
 public class Projectile {
@@ -45,10 +47,11 @@ public class Projectile {
     }
 
     public void tick() {
-        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_12))
-            ParticleDisplay.colored(location, automator.getLevel().getColor(), 1).spawn();
-        else
-            location.getWorld().spawnParticle(Particle.FLAME, location, 1, 0, 0, 0, 0);
+        Color color = automator.getLevel().getColor();
+        int red = color.getRed();
+        int green = color.getGreen();
+        int blue = color.getBlue();
+        CompatibleParticleHandler.redstoneParticles(location, red, green, blue, 1, 2, 0);
 
         for (int i = 0; i < 5; i++) {
             Location previousLocation = location.clone();
@@ -89,8 +92,7 @@ public class Projectile {
 
                 // Create a particle effect at the button's location
                 Location particleLocation = block.getLocation().add(0.5, 0.5, 0.5);
-                location.getWorld().spawnParticle(Particle.CRIT, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
-
+                CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.CRIT, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
                 BlockUtils.pressButton(block);
 
                 // Schedule a task to simulate the button pressing back out after a delay
@@ -102,7 +104,7 @@ public class Projectile {
 
                     // Create a particle effect at the button's location
                     Location particleLocation2 = block.getLocation().add(0.5, 0.5, 0.5);
-                    location.getWorld().spawnParticle(Particle.CRIT, particleLocation2, 10, 0.3, 0.3, 0.3, 0.1);
+                    CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.CRIT, particleLocation2, 10, 0.3, 0.3, 0.3, 0.1);
                 }, 20L); // Adjust the delay as needed (20 ticks = 1 second)
 
                 active = false;
@@ -206,7 +208,7 @@ public class Projectile {
 
                     // Create a particle effect at the entity's location
                     Location particleLocation = livingEntity.getLocation().add(0, livingEntity.getHeight() / 2, 0);
-                    location.getWorld().spawnParticle(Particle.CRIT, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
+                    CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.CRIT, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
 
                     // Set metadata on the entity to track the automator responsible for the kill
                     livingEntity.setMetadata("KilledByAutomator", new FixedMetadataValue(EpicAutomators.getInstance(), automator));
