@@ -2,7 +2,7 @@ package com.songoda.epicautomators.task.projectile;
 
 import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.hooks.ProtectionManager;
-import com.craftaro.core.hooks.protection.Protection;
+import com.craftaro.core.utils.BlockUtils;
 import com.craftaro.third_party.com.cryptomorin.xseries.XSound;
 import com.craftaro.third_party.com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.songoda.epicautomators.EpicAutomators;
@@ -12,15 +12,11 @@ import com.songoda.epicautomators.utils.ItemUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Rotatable;
-import org.bukkit.block.data.type.Switch;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -88,31 +84,28 @@ public class Projectile {
                 // The projectile has hit a sign, calculate the bounce direction
                 direction = calculateBounceDirection(block);
             } else if (block.getType().name().contains("BUTTON")) {
-                // The projectile has hit a button, press it
-                BlockData blockData = block.getBlockData();
-                if (blockData instanceof Switch) {
-                    Switch buttonSwitch = (Switch) blockData;
-                    buttonSwitch.setPowered(true);
-                    block.setBlockData(buttonSwitch);
+                // Play a sound effect when the button is pressed
+                XSound.BLOCK_STONE_BUTTON_CLICK_ON.play(location, 1.0F, 1.0F);
 
-                    // Play a sound effect when the button is pressed
-                    XSound.BLOCK_STONE_BUTTON_CLICK_ON.play(location, 1.0F, 1.0F);
+                // Create a particle effect at the button's location
+                Location particleLocation = block.getLocation().add(0.5, 0.5, 0.5);
+                location.getWorld().spawnParticle(Particle.CRIT, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
+
+                BlockUtils.pressButton(block);
+
+                // Schedule a task to simulate the button pressing back out after a delay
+                Bukkit.getScheduler().runTaskLater(EpicAutomators.getInstance(), () -> {
+                    BlockUtils.releaseButton(block);
+
+                    // Play a sound effect when the button presses back out
+                    XSound.BLOCK_STONE_BUTTON_CLICK_OFF.play(location, 1.0F, 1.0F);
 
                     // Create a particle effect at the button's location
-                    Location particleLocation = block.getLocation().add(0.5, 0.5, 0.5);
-                    location.getWorld().spawnParticle(Particle.CRIT, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
+                    Location particleLocation2 = block.getLocation().add(0.5, 0.5, 0.5);
+                    location.getWorld().spawnParticle(Particle.CRIT, particleLocation2, 10, 0.3, 0.3, 0.3, 0.1);
+                }, 20L); // Adjust the delay as needed (20 ticks = 1 second)
 
-                    // Schedule a task to deactivate the button after a delay
-                    Bukkit.getScheduler().runTaskLater(EpicAutomators.getInstance(), () -> {
-                        BlockState buttonState = block.getState();
-                        if (buttonState instanceof Switch) {
-                            Switch buttonSwitchState = (Switch) buttonState;
-                            buttonSwitchState.setPowered(false);
-                            buttonState.update(true);
-                        }
-                    }, 20L); // Adjust the delay as needed (20 ticks = 1 second)
-                    active = false;
-                }
+                active = false;
             } else if (!block.getType().isAir() && isNotCrop) {
                 if (blocksDestroyed < automator.getMaxBlocks()) {
                     blocksDestroyed++;
@@ -233,6 +226,12 @@ public class Projectile {
         if (automator.isOwnerLoaded() && !ProtectionManager.canBreak(player.getPlayer(), location) || Settings.MATERIAL_BLACKLIST.getStringList()
                 .contains(blockToBreak.getType().name())) {
             // If the event is cancelled, don't break the block
+            active = false;
+            return false;
+        }
+
+        if (EpicAutomators.getInstance().getAutomatorManager().getAutomator(blockToBreak.getLocation()) != null) {
+            // If the block is an automator, don't break it
             active = false;
             return false;
         }
