@@ -108,6 +108,17 @@ public class Projectile {
                 }, 20L); // Adjust the delay as needed (20 ticks = 1 second)
 
                 active = false;
+
+            } else if (block.getType() == Material.LEVER) {
+                // Toggle the lever
+                BlockUtils.toggleLever(block);
+
+                // Play a sound effect when the lever is toggled
+                XSound.BLOCK_LEVER_CLICK.play(location, 1.0F, 1.0F);
+
+                // Create a particle effect at the lever's location
+                Location particleLocation = block.getLocation().add(0.5, 0.5, 0.5);
+                CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.CRIT, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
             } else if (!block.getType().isAir() && isNotCrop) {
                 if (blocksDestroyed < automator.getMaxBlocks()) {
                     blocksDestroyed++;
