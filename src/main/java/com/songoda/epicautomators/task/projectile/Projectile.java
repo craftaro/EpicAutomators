@@ -77,8 +77,7 @@ public class Projectile {
 
             boolean isNotCrop = !isCrop(block) || isCropFullyGrown(block);
 
-            if (isNotCrop)
-                blocksTravelled++;
+            blocksTravelled++;
 
             if (blocksTravelled % 5 == 0)
                 nearbyEntities = location.getWorld().getNearbyEntities(location, 100, 100, 100);
