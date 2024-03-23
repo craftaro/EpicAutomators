@@ -1,5 +1,6 @@
 package com.songoda.epicautomators.task.projectile;
 
+import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.third_party.com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.songoda.epicautomators.EpicAutomators;
 import com.songoda.epicautomators.automator.Automator;
@@ -7,9 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class IdleTask extends BukkitRunnable {
 
@@ -30,7 +28,11 @@ public class IdleTask extends BukkitRunnable {
             Location particleLocation = block.getLocation().add(0.5, 0.5, 0.5);
 
             // Spawn 2 particles in the center of the block in front of the automator
-            ParticleDisplay.colored(particleLocation, automator.getLevel().getColor(), 2).spawn();
+            if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_12))
+                ParticleDisplay.colored(particleLocation, automator.getLevel().getColor(), 2).spawn();
+            else
+                particleLocation.getWorld().spawnParticle(Particle.FLAME, particleLocation, 1, 0, 0, 0, 0);
+
         }
     }
 }

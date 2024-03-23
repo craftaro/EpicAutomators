@@ -1,5 +1,6 @@
 package com.songoda.epicautomators.task.projectile;
 
+import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.hooks.ProtectionManager;
 import com.craftaro.core.hooks.protection.Protection;
 import com.craftaro.third_party.com.cryptomorin.xseries.XSound;
@@ -46,7 +47,10 @@ public class Projectile {
     }
 
     public void tick() {
-        ParticleDisplay.colored(location, automator.getLevel().getColor(), 1).spawn();
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_12))
+            ParticleDisplay.colored(location, automator.getLevel().getColor(), 1).spawn();
+        else
+            location.getWorld().spawnParticle(Particle.FLAME, location, 1, 0, 0, 0, 0);
 
         for (int i = 0; i < 5; i++) {
             Location previousLocation = location.clone();
