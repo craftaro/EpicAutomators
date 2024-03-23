@@ -1,7 +1,9 @@
 package com.songoda.epicautomators.task.projectile;
 
+import com.craftaro.core.compatibility.CompatibleParticleHandler;
+import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.hooks.ProtectionManager;
-import com.craftaro.core.hooks.protection.Protection;
+import com.craftaro.core.utils.BlockUtils;
 import com.craftaro.third_party.com.cryptomorin.xseries.XSound;
 import com.craftaro.third_party.com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.songoda.epicautomators.EpicAutomators;
@@ -16,14 +18,13 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+import java.awt.Color;
 import java.util.Collection;
 
 public class Projectile {
@@ -46,7 +47,11 @@ public class Projectile {
     }
 
     public void tick() {
-        ParticleDisplay.colored(location, automator.getLevel().getColor(), 1).spawn();
+        Color color = automator.getLevel().getColor();
+        int red = color.getRed();
+        int green = color.getGreen();
+        int blue = color.getBlue();
+        CompatibleParticleHandler.redstoneParticles(location, red, green, blue, 1, 2, 0);
 
         for (int i = 0; i < 5; i++) {
             Location previousLocation = location.clone();
@@ -73,8 +78,7 @@ public class Projectile {
 
             boolean isNotCrop = !isCrop(block) || isCropFullyGrown(block);
 
-            if (isNotCrop)
-                blocksTravelled++;
+            blocksTravelled++;
 
             if (blocksTravelled % 5 == 0)
                 nearbyEntities = location.getWorld().getNearbyEntities(location, 100, 100, 100);
@@ -82,6 +86,28 @@ public class Projectile {
             if (block.getState() instanceof Sign) {
                 // The projectile has hit a sign, calculate the bounce direction
                 direction = calculateBounceDirection(block);
+            } else if (block.getType().name().contains("BUTTON")) {
+                // Play a sound effect when the button is pressed
+                XSound.BLOCK_STONE_BUTTON_CLICK_ON.play(location, 1.0F, 1.0F);
+
+                // Create a particle effect at the button's location
+                Location particleLocation = block.getLocation().add(0.5, 0.5, 0.5);
+                CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.CRIT, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
+                BlockUtils.pressButton(block);
+
+                // Schedule a task to simulate the button pressing back out after a delay
+                Bukkit.getScheduler().runTaskLater(EpicAutomators.getInstance(), () -> {
+                    BlockUtils.releaseButton(block);
+
+                    // Play a sound effect when the button presses back out
+                    XSound.BLOCK_STONE_BUTTON_CLICK_OFF.play(location, 1.0F, 1.0F);
+
+                    // Create a particle effect at the button's location
+                    Location particleLocation2 = block.getLocation().add(0.5, 0.5, 0.5);
+                    CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.CRIT, particleLocation2, 10, 0.3, 0.3, 0.3, 0.1);
+                }, 20L); // Adjust the delay as needed (20 ticks = 1 second)
+
+                active = false;
             } else if (!block.getType().isAir() && isNotCrop) {
                 if (blocksDestroyed < automator.getMaxBlocks()) {
                     blocksDestroyed++;
@@ -182,7 +208,7 @@ public class Projectile {
 
                     // Create a particle effect at the entity's location
                     Location particleLocation = livingEntity.getLocation().add(0, livingEntity.getHeight() / 2, 0);
-                    location.getWorld().spawnParticle(Particle.CRIT, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
+                    CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.CRIT, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
 
                     // Set metadata on the entity to track the automator responsible for the kill
                     livingEntity.setMetadata("KilledByAutomator", new FixedMetadataValue(EpicAutomators.getInstance(), automator));
@@ -202,6 +228,12 @@ public class Projectile {
         if (automator.isOwnerLoaded() && !ProtectionManager.canBreak(player.getPlayer(), location) || Settings.MATERIAL_BLACKLIST.getStringList()
                 .contains(blockToBreak.getType().name())) {
             // If the event is cancelled, don't break the block
+            active = false;
+            return false;
+        }
+
+        if (EpicAutomators.getInstance().getAutomatorManager().getAutomator(blockToBreak.getLocation()) != null) {
+            // If the block is an automator, don't break it
             active = false;
             return false;
         }
