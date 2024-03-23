@@ -46,7 +46,7 @@ public class BlockListeners implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
-        CompatibleHand hand = CompatibleHand.getHand(event.getHand());
+        CompatibleHand hand = CompatibleHand.getHand(event);
         if (hand != CompatibleHand.MAIN_HAND || event.getAction() != Action.RIGHT_CLICK_BLOCK)
             return;
 
