@@ -53,7 +53,6 @@ public class AutomatorManager implements LoadsData {
                     int y = result.get("y").asInt();
                     int z = result.get("z").asInt();
                     Location location = new Location(world, x, y, z);
-                    System.out.println("uuid: " + result.get("owner").asString());
                     OfflinePlayer owner = Bukkit.getOfflinePlayer(UUID.fromString(result.get("owner").asString()));
                     BlockFace direction = BlockFace.valueOf(result.get("direction").asString());
                     int level = result.get("level").asInt();
