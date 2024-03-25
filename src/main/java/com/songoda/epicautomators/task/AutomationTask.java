@@ -28,6 +28,8 @@ public class AutomationTask extends BukkitRunnable {
                 Location location = automator.getLocation();
 
                 if (automator.isRunning() && automator.fuel()) {
+                    if (automator.getLocation().getBlock().isBlockPowered())
+                        continue;
                     plugin.getProjectileTask().add(automator);
                     XSound.ENTITY_AXOLOTL_DEATH.play(location, 1.5F, 1.2F);
                 } else if (automator.isRunning() && !automator.fuel()) {
