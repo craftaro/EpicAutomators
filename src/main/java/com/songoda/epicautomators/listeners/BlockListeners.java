@@ -76,6 +76,7 @@ public class BlockListeners implements Listener {
             return;
 
         automator.destroy();
+        event.setDropItems(false);
 
         plugin.getAutomatorManager().removeAutomator(automator.getLocation());
     }
