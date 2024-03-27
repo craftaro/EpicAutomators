@@ -204,22 +204,18 @@ public class Projectile {
             if (entity instanceof LivingEntity && entity.getLocation().distanceSquared(location) <= 1) {
                 LivingEntity livingEntity = (LivingEntity) entity;
                 if (livingEntity.getNoDamageTicks() == 0) {
-                    livingEntity.setFireTicks(100); // Set the entity on fire for 5 seconds (100 ticks)
+                    livingEntity.setFireTicks(40); // Set the entity on fire for 2 seconds (40 ticks)
 
                     double damage = automator.getLevel().getDamage();
                     livingEntity.damage(damage);
 
-                    // Apply knockback to the entity
-                    Vector knockbackDirection = livingEntity.getLocation().toVector().subtract(location.toVector()).normalize();
-                    double knockbackStrength = 1.5; // Adjust this value to control the knockback strength
-                    livingEntity.setVelocity(knockbackDirection.multiply(knockbackStrength));
-
-                    // Play a sound effect when the entity is hit
-                    XSound.ENTITY_PLAYER_ATTACK_KNOCKBACK.play(location, 1.0F, 1.0F);
+                    // Play a fire-themed sound effect when the entity is hit
+                    XSound.BLOCK_FIRE_AMBIENT.play(location, 1.0F, 1.0F);
+                    XSound.ENTITY_GENERIC_HURT.play(location, 1.0F, 1.0F);
 
                     // Create a particle effect at the entity's location
                     Location particleLocation = livingEntity.getLocation().add(0, livingEntity.getHeight() / 2, 0);
-                    CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.CRIT, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
+                    CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.FLAME, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
 
                     // Set metadata on the entity to track the automator responsible for the kill
                     livingEntity.setMetadata("KilledByAutomator", new FixedMetadataValue(EpicAutomators.getInstance(), automator));
