@@ -61,7 +61,8 @@ public class BlockListeners implements Listener {
         event.setCancelled(true);
 
         if (automator.isGuiActive()) {
-            player.sendMessage("Automator is already active.");
+            plugin.getLocale().getMessage("event.access.alreadyopen").sendPrefixedMessage(player);
+            XSound.ENTITY_VILLAGER_NO.play(player);
             return;
         }
 
