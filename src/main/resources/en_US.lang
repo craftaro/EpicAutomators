@@ -54,3 +54,6 @@ event:
     cannotafford: '&cYou cannot afford this upgrade.'
     success: '&7You successfully upgraded this automator to &6level %level%&7!'
     maxed: '&7You maxed out this automator at &6level %level%&7.'
+  access:
+    noaccess: '&cYou do not have access to this automator.'
+    alreadyopen: '&7This automator already have this automator open.'
