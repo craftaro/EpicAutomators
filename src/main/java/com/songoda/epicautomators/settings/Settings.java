@@ -30,6 +30,9 @@ public class Settings {
     public static final ConfigSetting SHOW_IDLE_PARTICLES = new ConfigSetting(CONFIG, "Main.Show Idle Particles", true,
             "Should idle particles be shown when the automator is not running?");
 
+    public static final ConfigSetting ONLY_OWNER_CAN_USE = new ConfigSetting(CONFIG, "Main.Only Owner Can Use", true,
+            "Should only the owner of the automator be able to use it?");
+
     public static final ConfigSetting ECONOMY_PLUGIN = new ConfigSetting(CONFIG, "Main.Economy", EconomyManager.getEconomy() == null ? "Vault" : EconomyManager.getEconomy().getName(),
             "Which economy plugin should be used?",
             "Supported plugins you have installed: \"" + String.join("\", \"", EconomyManager.getManager().getRegisteredPlugins()) + "\".");

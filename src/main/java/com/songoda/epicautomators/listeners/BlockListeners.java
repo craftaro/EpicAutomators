@@ -1,6 +1,7 @@
 package com.songoda.epicautomators.listeners;
 
 import com.craftaro.core.compatibility.CompatibleHand;
+import com.craftaro.third_party.com.cryptomorin.xseries.XSound;
 import com.songoda.epicautomators.EpicAutomators;
 import com.songoda.epicautomators.automator.Automator;
 import com.songoda.epicautomators.settings.Settings;
@@ -61,8 +62,17 @@ public class BlockListeners implements Listener {
         event.setCancelled(true);
 
         if (automator.isGuiActive()) {
-            player.sendMessage("Automator is already active.");
+            plugin.getLocale().getMessage("event.access.alreadyopen").sendPrefixedMessage(player);
+            XSound.ENTITY_VILLAGER_NO.play(player);
             return;
+        }
+
+        if (Settings.ONLY_OWNER_CAN_USE.getBoolean() && !automator.getOwner().getUniqueId().equals(player.getUniqueId())) {
+            if (!player.hasPermission("epicautomators.accessall")) {
+                plugin.getLocale().getMessage("event.access.noaccess").sendPrefixedMessage(player);
+                XSound.ENTITY_VILLAGER_NO.play(player);
+                return;
+            }
         }
 
         plugin.getGuiManager().showGUI(player, automator.getOverviewGui(player));

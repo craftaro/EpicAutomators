@@ -34,6 +34,7 @@ public class AutomationTask extends BukkitRunnable {
                     XSound.ENTITY_AXOLOTL_DEATH.play(location, 1.5F, 1.2F);
                 } else if (automator.isRunning() && !automator.fuel()) {
                     automator.setRunning(false);
+                    automator.save("running");
                     XSound.BLOCK_BEACON_DEACTIVATE.play(location, 1.5F, 1.2F);
                 }
                 automator.setTicksSinceLastBlast(0);
