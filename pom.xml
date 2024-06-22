@@ -111,11 +111,12 @@
 
     <repositories>
         <repository>
-            <id>public</id>
-            <url>https://repo.songoda.com/repository/public/</url>
+            <id>songoda-minecraft-plugins</id>
+            <url>https://repo.songoda.com/repository/minecraft-plugins/</url>
         </repository>
+
         <repository>
-            <id>spigot-repo</id>
+            <id>SpigotMC</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
