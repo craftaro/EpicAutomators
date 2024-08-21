@@ -41,27 +41,27 @@ public class Level {
         Locale locale = EpicAutomators.getInstance().getLocale();
 
         this.description.add(locale.getMessage("interface.automator.speed")
-                .processPlaceholder("speed", speedMultiplier).getMessage());
+                .processPlaceholder("speed", speedMultiplier).toText());
         this.description.add(locale.getMessage("interface.automator.maxdistance")
-                .processPlaceholder("distance", maxDistance).getMessage());
+                .processPlaceholder("distance", maxDistance).toText());
         this.description.add(locale.getMessage("interface.automator.maxblocks")
-                .processPlaceholder("blocks", maxBlocks).getMessage());
+                .processPlaceholder("blocks", maxBlocks).toText());
 
         if (autoPickup)
             this.description.add(locale.getMessage("interface.automator.autopickup")
-                    .processPlaceholder("autopickup", autoPickup).getMessage());
+                    .processPlaceholder("autopickup", autoPickup).toText());
 
         if (damage > 0)
             this.description.add(locale.getMessage("interface.automator.damage")
-                    .processPlaceholder("damage", damage).getMessage());
+                    .processPlaceholder("damage", damage).toText());
 
         if (crops)
             this.description.add(locale.getMessage("interface.automator.crops")
-                    .processPlaceholder("crops", crops).getMessage());
+                    .processPlaceholder("crops", crops).toText());
 
         if (autoSmelt)
             this.description.add(locale.getMessage("interface.automator.autosmelt")
-                    .processPlaceholder("autosmelt", autoSmelt).getMessage());
+                    .processPlaceholder("autosmelt", autoSmelt).toText());
     }
 
     public List<String> getDescription() {

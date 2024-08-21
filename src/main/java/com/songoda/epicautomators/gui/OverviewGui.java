@@ -83,7 +83,7 @@ public class OverviewGui extends CustomizableGui {
         setItem("information", 1, 4, GuiUtils.createButtonItem(
                 Settings.AUTOMATOR_ITEM.getMaterial(XMaterial.OBSIDIAN),
                 plugin.getLocale().getMessage("interface.automator.currentlevel")
-                        .processPlaceholder("level", level.getLevel()).getMessage(),
+                        .processPlaceholder("level", level.getLevel()).toText(),
                 getAutomatorDescription(nextLevel)));
 
         if (Settings.UPGRADE_WITH_XP.getBoolean()
@@ -141,7 +141,7 @@ public class OverviewGui extends CustomizableGui {
                             Settings.DISTANCE_ICON.getMaterial(XMaterial.COMPASS),
                             this.plugin.getLocale().getMessage("interface.automator.distancetitle").getMessage(),
                             this.plugin.getLocale().getMessage("interface.automator.distanceinfo")
-                                    .processPlaceholder("amount", automator.getLaserDistance()).getMessage().split("\\|")),
+                                    .processPlaceholder("amount", automator.getLaserDistance()).getMessageLines('|')),
                     event -> {
                         int strength = automator.getLaserDistance();
                         if (event.clickType.isRightClick()) {
@@ -161,7 +161,7 @@ public class OverviewGui extends CustomizableGui {
                             Settings.BLOCKS_ICON.getMaterial(XMaterial.STONE),
                             this.plugin.getLocale().getMessage("interface.automator.blockstitle").getMessage(),
                             this.plugin.getLocale().getMessage("interface.automator.blocksinfo")
-                                    .processPlaceholder("amount", automator.getMaxBlocks()).getMessage().split("\\|")),
+                                    .processPlaceholder("amount", automator.getMaxBlocks()).getMessageLines('|')),
                     event -> {
                         int strength = automator.getMaxBlocks();
                         if (event.clickType.isRightClick()) {
@@ -181,8 +181,8 @@ public class OverviewGui extends CustomizableGui {
                             Settings.AUTO_PICKUP_ICON.getMaterial(XMaterial.HOPPER),
                             this.plugin.getLocale().getMessage("interface.automator.autopickuptitle").getMessage(),
                             this.plugin.getLocale().getMessage("interface.automator.autopickupinfo")
-                                    .processPlaceholder("status", automator.isAutoPickup() ? plugin.getLocale().getMessage("on").getMessage()
-                                            : plugin.getLocale().getMessage("off").getMessage()).getMessage().split("\\|")),
+                                    .processPlaceholder("status", automator.isAutoPickup() ? plugin.getLocale().getMessage("on").toText()
+                                            : plugin.getLocale().getMessage("off").toText()).getMessageLines('|')),
                     event -> {
                         automator.setAutoPickup(!automator.isAutoPickup());
                         automator.save("auto_pickup");
@@ -195,8 +195,8 @@ public class OverviewGui extends CustomizableGui {
                             Settings.DAMAGE_ICON.getMaterial(XMaterial.DIAMOND_SWORD),
                             this.plugin.getLocale().getMessage("interface.automator.damagetitle").getMessage(),
                             this.plugin.getLocale().getMessage("interface.automator.damageinfo")
-                                    .processPlaceholder("status", automator.doesDamage() ? plugin.getLocale().getMessage("on").getMessage()
-                                            : plugin.getLocale().getMessage("off").getMessage()).getMessage().split("\\|")),
+                                    .processPlaceholder("status", automator.doesDamage() ? plugin.getLocale().getMessage("on").toText()
+                                            : plugin.getLocale().getMessage("off").toText()).getMessageLines('|')),
                     event -> {
                         automator.setDoesDamage(!automator.doesDamage());
                         automator.save("does_damage");
@@ -209,10 +209,10 @@ public class OverviewGui extends CustomizableGui {
                             Settings.CROPS_ICON.getMaterial(XMaterial.WHEAT),
                             this.plugin.getLocale().getMessage("interface.automator.cropstitle").getMessage(),
                             this.plugin.getLocale().getMessage("interface.automator.cropsinfo")
-                                    .processPlaceholder("harvesting", automator.isAutoHarvest() ? plugin.getLocale().getMessage("on").getMessage()
+                                    .processPlaceholder("harvesting", automator.isAutoHarvest() ? plugin.getLocale().getMessage("on").toText()
                                             : plugin.getLocale().getMessage("off").getMessage())
-                                    .processPlaceholder("replant", automator.isReplant() ? plugin.getLocale().getMessage("on").getMessage()
-                                            : plugin.getLocale().getMessage("off").getMessage()).getMessage().split("\\|")),
+                                    .processPlaceholder("replant", automator.isReplant() ? plugin.getLocale().getMessage("on").toText()
+                                            : plugin.getLocale().getMessage("off").getMessage()).getMessageLines('|')),
                     event -> {
                         if (event.clickType.isLeftClick()) {
                             automator.setCrops(!automator.isAutoHarvest());
@@ -231,8 +231,8 @@ public class OverviewGui extends CustomizableGui {
                             Settings.AUTO_SMELT_ICON.getMaterial(XMaterial.FURNACE),
                             this.plugin.getLocale().getMessage("interface.automator.autosmelttitle").getMessage(),
                             this.plugin.getLocale().getMessage("interface.automator.autosmeltinfo")
-                                    .processPlaceholder("status", automator.isAutoSmelt() ? plugin.getLocale().getMessage("on").getMessage()
-                                            : plugin.getLocale().getMessage("off").getMessage()).getMessage().split("\\|")),
+                                    .processPlaceholder("status", automator.isAutoSmelt() ? plugin.getLocale().getMessage("on").toText()
+                                            : plugin.getLocale().getMessage("off").toText()).getMessageLines('|')),
                     event -> {
                         automator.setAutoSmelt(!automator.isAutoSmelt());
                         automator.save("auto_smelt");
@@ -295,10 +295,10 @@ public class OverviewGui extends CustomizableGui {
         lore.addAll(level.getDescription());
         lore.add("");
         if (nextLevel == null) {
-            lore.add(plugin.getLocale().getMessage("interface.automator.alreadymaxed").getMessage());
+            lore.add(plugin.getLocale().getMessage("interface.automator.alreadymaxed").toText());
         } else {
             lore.add(plugin.getLocale().getMessage("interface.automator.level")
-                    .processPlaceholder("level", nextLevel.getLevel()).getMessage());
+                    .processPlaceholder("level", nextLevel.getLevel()).toText());
             lore.addAll(nextLevel.getDescription());
         }
         return lore;
