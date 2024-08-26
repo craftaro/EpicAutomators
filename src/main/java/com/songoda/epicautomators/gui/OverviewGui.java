@@ -210,9 +210,9 @@ public class OverviewGui extends CustomizableGui {
                             this.plugin.getLocale().getMessage("interface.automator.cropstitle").getMessage(),
                             this.plugin.getLocale().getMessage("interface.automator.cropsinfo")
                                     .processPlaceholder("harvesting", automator.isAutoHarvest() ? plugin.getLocale().getMessage("on").toText()
-                                            : plugin.getLocale().getMessage("off").getMessage())
+                                            : plugin.getLocale().getMessage("off").toText())
                                     .processPlaceholder("replant", automator.isReplant() ? plugin.getLocale().getMessage("on").toText()
-                                            : plugin.getLocale().getMessage("off").getMessage()).getMessageLines('|')),
+                                            : plugin.getLocale().getMessage("off").toText()).getMessageLines('|')),
                     event -> {
                         if (event.clickType.isLeftClick()) {
                             automator.setCrops(!automator.isAutoHarvest());
