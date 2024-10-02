@@ -49,7 +49,7 @@ public class Level {
 
         if (autoPickup)
             this.description.add(locale.getMessage("interface.automator.autopickup")
-                    .processPlaceholder("autopickup", autoPickup).toText());
+                    .processPlaceholder("autopickup", String.valueOf(autoPickup)).toText());
 
         if (damage > 0)
             this.description.add(locale.getMessage("interface.automator.damage")
@@ -57,11 +57,11 @@ public class Level {
 
         if (crops)
             this.description.add(locale.getMessage("interface.automator.crops")
-                    .processPlaceholder("crops", crops).toText());
+                    .processPlaceholder("crops", String.valueOf(crops)).toText());
 
         if (autoSmelt)
             this.description.add(locale.getMessage("interface.automator.autosmelt")
-                    .processPlaceholder("autosmelt", autoSmelt).toText());
+                    .processPlaceholder("autosmelt", String.valueOf(autoSmelt)).toText());
     }
 
     public List<String> getDescription() {
