@@ -120,6 +120,8 @@ public class Projectile {
                 // Create a particle effect at the lever's location
                 Location particleLocation = block.getLocation().add(0.5, 0.5, 0.5);
                 CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.CRIT, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
+
+                active = false;
             } else if (!block.getType().isAir() && isNotCrop) {
                 if (blocksDestroyed < automator.getMaxBlocks()) {
                     blocksDestroyed++;
