@@ -1,20 +1,21 @@
 package com.songoda.epicautomators.task.projectile;
 
 import com.craftaro.core.compatibility.CompatibleParticleHandler;
-import com.craftaro.core.compatibility.ServerVersion;
+import com.craftaro.core.compatibility.crops.CompatibleCrop;
 import com.craftaro.core.hooks.ProtectionManager;
-import com.craftaro.core.utils.BlockUtils;
-import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
+import com.craftaro.core.nms.Nms;
 import com.craftaro.third_party.com.cryptomorin.xseries.XSound;
 import com.songoda.epicautomators.EpicAutomators;
 import com.songoda.epicautomators.automator.Automator;
 import com.songoda.epicautomators.settings.Settings;
 import com.songoda.epicautomators.utils.ItemUtils;
-import org.bukkit.*;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
-import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.Entity;
@@ -29,7 +30,6 @@ import java.awt.Color;
 import java.util.Collection;
 
 public class Projectile {
-
     private final Automator automator;
     private Location location;
     private Vector direction;
@@ -94,25 +94,12 @@ public class Projectile {
                 // Create a particle effect at the button's location
                 Location particleLocation = block.getLocation().add(0.5, 0.5, 0.5);
                 CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.CRIT, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
-                BlockUtils.pressButton(block);
-
-                // Schedule a task to simulate the button pressing back out after a delay
-                Bukkit.getScheduler().runTaskLater(EpicAutomators.getInstance(), () -> {
-                    BlockUtils.releaseButton(block);
-
-                    // Play a sound effect when the button presses back out
-                    XSound.BLOCK_STONE_BUTTON_CLICK_OFF.play(location, 1.0F, 1.0F);
-
-                    // Create a particle effect at the button's location
-                    Location particleLocation2 = block.getLocation().add(0.5, 0.5, 0.5);
-                    CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.CRIT, particleLocation2, 10, 0.3, 0.3, 0.3, 0.1);
-                }, 20L); // Adjust the delay as needed (20 ticks = 1 second)
+                Nms.getImplementations().getWorld().pressButton(block);
 
                 active = false;
-
             } else if (block.getType() == Material.LEVER) {
                 // Toggle the lever
-                BlockUtils.toggleLever(block);
+                Nms.getImplementations().getWorld().toggleLever(block);
 
                 // Play a sound effect when the lever is toggled
                 XSound.BLOCK_LEVER_CLICK.play(location, 1.0F, 1.0F);
@@ -120,6 +107,8 @@ public class Projectile {
                 // Create a particle effect at the lever's location
                 Location particleLocation = block.getLocation().add(0.5, 0.5, 0.5);
                 CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.CRIT, particleLocation, 10, 0.3, 0.3, 0.3, 0.1);
+
+                active = false;
             } else if (!block.getType().isAir() && isNotCrop) {
                 if (blocksDestroyed < automator.getMaxBlocks()) {
                     blocksDestroyed++;
@@ -288,7 +277,7 @@ public class Projectile {
                 if (automator.isAutoPickup()) {
                     drops.forEach(automator::addItem);
                     if (automator.isReplant()) {
-                        blockToBreak.setType(getSeedsForCrop(blockToBreak.getType()));
+                        CompatibleCrop.resetCropAge(blockToBreak);
 
                         // Create a particle effect at the block location
                         Location particleLocation = blockToBreak.getLocation().add(0.5, 0.5, 0.5);
@@ -297,8 +286,10 @@ public class Projectile {
                         blockToBreak.setType(Material.AIR);
                     }
                 } else {
-                    blockToBreak.breakNaturally();
-                    blockToBreak.setType(getSeedsForCrop(blockToBreak.getType()));
+                    CompatibleCrop.resetCropAge(blockToBreak);
+                    for (ItemStack itemToDrop : drops) {
+                        blockToBreak.getWorld().dropItemNaturally(blockToBreak.getLocation(), itemToDrop);
+                    }
                 }
                 return true;
             } else {
@@ -350,57 +341,11 @@ public class Projectile {
     }
 
     private boolean isCrop(Block block) {
-        Material material = block.getType();
-        return material == Material.WHEAT ||
-                material == Material.CARROTS ||
-                material == Material.POTATOES ||
-                material == Material.BEETROOTS ||
-                material == Material.NETHER_WART;
+        return CompatibleCrop.isCrop(block);
     }
 
     private boolean isCropFullyGrown(Block block) {
-        Material material = block.getType();
-
-        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_20)) {
-            byte data = block.getData();
-            return (material == Material.WHEAT && data == 7) ||
-                    (material == Material.CARROTS && data == 7) ||
-                    (material == Material.POTATOES && data == 7) ||
-                    (material == Material.BEETROOTS && data == 3) ||
-                    (material == XMaterial.NETHER_WART.parseMaterial() && data == 3);
-        } else {
-            int age = getAge(block);
-            return (material == Material.WHEAT && age == 7) ||
-                    (material == Material.CARROTS && age == 7) ||
-                    (material == Material.POTATOES && age == 7) ||
-                    (material == Material.BEETROOTS && age == 3) ||
-                    (material == Material.NETHER_WART && age == 3);
-        }
-    }
-
-    private int getAge(Block block) {
-        if (block.getBlockData() instanceof Ageable) {
-            Ageable ageable = (Ageable) block.getBlockData();
-            return ageable.getAge();
-        }
-        return -1;
-    }
-
-    private Material getSeedsForCrop(Material cropMaterial) {
-        switch (cropMaterial) {
-            case WHEAT:
-                return Material.WHEAT;
-            case CARROTS:
-                return Material.CARROTS;
-            case POTATOES:
-                return Material.POTATOES;
-            case BEETROOTS:
-                return Material.BEETROOTS;
-            case NETHER_WART:
-                return Material.NETHER_WART;
-            default:
-                return cropMaterial;
-        }
+        return CompatibleCrop.isCropFullyGrown(block);
     }
 
     public boolean isActive() {
