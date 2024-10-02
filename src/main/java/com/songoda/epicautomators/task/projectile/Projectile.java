@@ -1,7 +1,7 @@
 package com.songoda.epicautomators.task.projectile;
 
 import com.craftaro.core.compatibility.CompatibleParticleHandler;
-import com.craftaro.core.compatibility.ServerVersion;
+import com.craftaro.core.compatibility.crops.CompatibleCrop;
 import com.craftaro.core.hooks.ProtectionManager;
 import com.craftaro.core.nms.Nms;
 import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
@@ -17,7 +17,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
-import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.Entity;
@@ -341,57 +340,11 @@ public class Projectile {
     }
 
     private boolean isCrop(Block block) {
-        Material material = block.getType();
-        return material == Material.WHEAT ||
-                material == Material.CARROTS ||
-                material == Material.POTATOES ||
-                material == Material.BEETROOTS ||
-                material == Material.NETHER_WART;
+        return CompatibleCrop.isCrop(block);
     }
 
     private boolean isCropFullyGrown(Block block) {
-        Material material = block.getType();
-
-        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_20)) {
-            byte data = block.getData();
-            return (material == Material.WHEAT && data == 7) ||
-                    (material == Material.CARROTS && data == 7) ||
-                    (material == Material.POTATOES && data == 7) ||
-                    (material == Material.BEETROOTS && data == 3) ||
-                    (material == XMaterial.NETHER_WART.parseMaterial() && data == 3);
-        } else {
-            int age = getAge(block);
-            return (material == Material.WHEAT && age == 7) ||
-                    (material == Material.CARROTS && age == 7) ||
-                    (material == Material.POTATOES && age == 7) ||
-                    (material == Material.BEETROOTS && age == 3) ||
-                    (material == Material.NETHER_WART && age == 3);
-        }
-    }
-
-    private int getAge(Block block) {
-        if (block.getBlockData() instanceof Ageable) {
-            Ageable ageable = (Ageable) block.getBlockData();
-            return ageable.getAge();
-        }
-        return -1;
-    }
-
-    private Material getSeedsForCrop(Material cropMaterial) {
-        switch (cropMaterial) {
-            case WHEAT:
-                return Material.WHEAT;
-            case CARROTS:
-                return Material.CARROTS;
-            case POTATOES:
-                return Material.POTATOES;
-            case BEETROOTS:
-                return Material.BEETROOTS;
-            case NETHER_WART:
-                return Material.NETHER_WART;
-            default:
-                return cropMaterial;
-        }
+        return CompatibleCrop.isCropFullyGrown(block);
     }
 
     public boolean isActive() {
