@@ -4,7 +4,6 @@ import com.craftaro.core.compatibility.CompatibleParticleHandler;
 import com.craftaro.core.compatibility.crops.CompatibleCrop;
 import com.craftaro.core.hooks.ProtectionManager;
 import com.craftaro.core.nms.Nms;
-import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.third_party.com.cryptomorin.xseries.XSound;
 import com.songoda.epicautomators.EpicAutomators;
 import com.songoda.epicautomators.automator.Automator;
@@ -278,7 +277,7 @@ public class Projectile {
                 if (automator.isAutoPickup()) {
                     drops.forEach(automator::addItem);
                     if (automator.isReplant()) {
-                        blockToBreak.setType(getSeedsForCrop(blockToBreak.getType()));
+                        CompatibleCrop.resetCropAge(blockToBreak);
 
                         // Create a particle effect at the block location
                         Location particleLocation = blockToBreak.getLocation().add(0.5, 0.5, 0.5);
@@ -287,8 +286,10 @@ public class Projectile {
                         blockToBreak.setType(Material.AIR);
                     }
                 } else {
-                    blockToBreak.breakNaturally();
-                    blockToBreak.setType(getSeedsForCrop(blockToBreak.getType()));
+                    CompatibleCrop.resetCropAge(blockToBreak);
+                    for (ItemStack itemToDrop : drops) {
+                        blockToBreak.getWorld().dropItemNaturally(blockToBreak.getLocation(), itemToDrop);
+                    }
                 }
                 return true;
             } else {
