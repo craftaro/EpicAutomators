@@ -1,7 +1,7 @@
 name: EpicAutomators
 description: EpicAutomators
 main: com.songoda.epicautomators.EpicAutomators
-softdepend: [ HolographicDisplays, Vault, EpicHoppers ]
+softdepend: [ HolographicDisplays, Vault, EpicHoppers, MultiverseCore ]
 version: maven-version-number
 author: Songoda
 api-version: 1.13

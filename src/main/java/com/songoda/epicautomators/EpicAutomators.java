@@ -215,6 +215,6 @@ public class EpicAutomators extends SongodaPlugin {
         return getLocale()
                 .getMessage("general.nametag.automator")
                 .processPlaceholder("level", level)
-                .getMessage();
+                .toText();
     }
 }

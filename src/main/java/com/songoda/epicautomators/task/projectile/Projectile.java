@@ -4,8 +4,8 @@ import com.craftaro.core.compatibility.CompatibleParticleHandler;
 import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.hooks.ProtectionManager;
 import com.craftaro.core.utils.BlockUtils;
+import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.third_party.com.cryptomorin.xseries.XSound;
-import com.craftaro.third_party.com.cryptomorin.xseries.particles.ParticleDisplay;
 import com.songoda.epicautomators.EpicAutomators;
 import com.songoda.epicautomators.automator.Automator;
 import com.songoda.epicautomators.settings.Settings;
@@ -14,6 +14,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.Entity;
@@ -359,11 +360,30 @@ public class Projectile {
 
     private boolean isCropFullyGrown(Block block) {
         Material material = block.getType();
-        return material == Material.WHEAT && block.getData() == 7 ||
-                material == Material.CARROTS && block.getData() == 7 ||
-                material == Material.POTATOES && block.getData() == 7 ||
-                material == Material.BEETROOTS && block.getData() == 3 ||
-                material == Material.NETHER_WART && block.getData() == 3;
+
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_20)) {
+            byte data = block.getData();
+            return (material == Material.WHEAT && data == 7) ||
+                    (material == Material.CARROTS && data == 7) ||
+                    (material == Material.POTATOES && data == 7) ||
+                    (material == Material.BEETROOTS && data == 3) ||
+                    (material == XMaterial.NETHER_WART.parseMaterial() && data == 3);
+        } else {
+            int age = getAge(block);
+            return (material == Material.WHEAT && age == 7) ||
+                    (material == Material.CARROTS && age == 7) ||
+                    (material == Material.POTATOES && age == 7) ||
+                    (material == Material.BEETROOTS && age == 3) ||
+                    (material == Material.NETHER_WART && age == 3);
+        }
+    }
+
+    private int getAge(Block block) {
+        if (block.getBlockData() instanceof Ageable) {
+            Ageable ageable = (Ageable) block.getBlockData();
+            return ageable.getAge();
+        }
+        return -1;
     }
 
     private Material getSeedsForCrop(Material cropMaterial) {
