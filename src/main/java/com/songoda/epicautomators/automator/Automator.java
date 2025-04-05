@@ -1,14 +1,14 @@
 package com.songoda.epicautomators.automator;
 
-import com.craftaro.core.compatibility.ServerVersion;
-import com.craftaro.core.data.SQLDelete;
-import com.craftaro.core.data.SQLInsert;
-import com.craftaro.core.data.SavesData;
-import com.craftaro.core.hooks.EconomyManager;
-import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
-import com.craftaro.third_party.com.cryptomorin.xseries.XSound;
-import com.craftaro.third_party.org.h2.engine.Setting;
-import com.craftaro.third_party.org.jooq.DSLContext;
+import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.data.SQLDelete;
+import com.songoda.core.data.SQLInsert;
+import com.songoda.core.data.SavesData;
+import com.songoda.core.hooks.EconomyManager;
+import com.songoda.third_party.com.cryptomorin.xseries.XMaterial;
+import com.songoda.third_party.com.cryptomorin.xseries.XSound;
+import com.songoda.third_party.org.h2.engine.Setting;
+import com.songoda.third_party.org.jooq.DSLContext;
 import com.songoda.epicautomators.EpicAutomators;
 import com.songoda.epicautomators.automator.levels.Level;
 import com.songoda.epicautomators.gui.OverviewGui;

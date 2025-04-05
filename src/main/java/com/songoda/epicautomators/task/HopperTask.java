@@ -1,6 +1,6 @@
 package com.songoda.epicautomators.task;
 
-import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
+import com.songoda.third_party.com.cryptomorin.xseries.XMaterial;
 import com.songoda.epicautomators.EpicAutomators;
 import com.songoda.epicautomators.automator.Automator;
 import com.songoda.epicautomators.automator.AutomatorManager;

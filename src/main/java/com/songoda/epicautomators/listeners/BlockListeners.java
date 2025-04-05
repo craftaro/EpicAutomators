@@ -1,7 +1,7 @@
 package com.songoda.epicautomators.listeners;
 
-import com.craftaro.core.compatibility.CompatibleHand;
-import com.craftaro.third_party.com.cryptomorin.xseries.XSound;
+import com.songoda.core.compatibility.CompatibleHand;
+import com.songoda.third_party.com.cryptomorin.xseries.XSound;
 import com.songoda.epicautomators.EpicAutomators;
 import com.songoda.epicautomators.automator.Automator;
 import com.songoda.epicautomators.settings.Settings;

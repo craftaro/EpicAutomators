@@ -1,6 +1,6 @@
 package com.songoda.epicautomators.task.projectile;
 
-import com.craftaro.core.compatibility.CompatibleParticleHandler;
+import com.songoda.core.compatibility.CompatibleParticleHandler;
 import com.songoda.epicautomators.EpicAutomators;
 import com.songoda.epicautomators.automator.Automator;
 import org.bukkit.Location;

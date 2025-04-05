@@ -1,6 +1,6 @@
 package com.songoda.epicautomators.automator.levels;
 
-import com.craftaro.core.locale.Locale;
+import com.songoda.core.locale.Locale;
 import com.songoda.epicautomators.EpicAutomators;
 
 import java.awt.Color;

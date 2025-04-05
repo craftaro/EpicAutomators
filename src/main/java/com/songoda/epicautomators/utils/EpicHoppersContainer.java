@@ -1,9 +1,9 @@
 package com.songoda.epicautomators.utils;
 
-import com.craftaro.epichoppers.EpicHoppersApi;
-import com.craftaro.epichoppers.containers.CustomContainer;
-import com.craftaro.epichoppers.containers.IContainer;
-import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
+import com.songoda.epichoppers.EpicHoppersApi;
+import com.songoda.epichoppers.containers.CustomContainer;
+import com.songoda.epichoppers.containers.IContainer;
+import com.songoda.third_party.com.cryptomorin.xseries.XMaterial;
 import com.songoda.epicautomators.EpicAutomators;
 import com.songoda.epicautomators.automator.Automator;
 import org.bukkit.block.Block;

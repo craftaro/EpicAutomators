@@ -1,6 +1,6 @@
 package com.songoda.epicautomators.commands;
 
-import com.craftaro.core.commands.AbstractCommand;
+import com.songoda.core.commands.AbstractCommand;
 import com.songoda.epicautomators.EpicAutomators;
 import com.songoda.epicautomators.automator.levels.Level;
 import org.bukkit.Bukkit;
