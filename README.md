@@ -1,10 +1,23 @@
 <!--suppress HtmlDeprecatedAttribute -->
 <div align="center">
 <img src="docs/Logo.png" width="128px">
+</div>
 
 # EpicAutomators
-**Automate your world with lasers that can break blocks, harvest crops, damage entities, and much more. Strategically place signs to control laser pathways and create intricate automation setups.**
 
+> **[Official EpicAutomators website][Plugin page]**
+>
+> For the latest downloads, supported Minecraft versions, documentation,
+> installation instructions, compatibility information, updates, and support,
+> visit the Songoda Reborn page above.
+
+EpicAutomators is a Minecraft world-automation server plugin developed and maintained by
+**Songoda Reborn**.
+
+It uses configurable lasers to break blocks, harvest crops, and damage entities, with
+signs controlling laser paths and automation layouts.
+
+<div align="center">
 
 [![Discord][Discord shield]][Discord invite]
 <br>
@@ -12,29 +25,24 @@
 </div>
 
 
-## Download (Marketplace)
-You can visit [our marketplace][Plugin page] to download EpicAutomators as well as take a
-look at many other fantastic plugins which are sure to catch your eye.
+## Downloads
+Downloads and supported Minecraft versions are available from the
+[Songoda Reborn plugin page][Plugin page].
 
 ## Documentation
-You can find all the information about EpicAutomators, including dependencies, commands, permissions and incompatible
-plugins on [our wiki][Plugin wiki].
-
-Feel free to also contribute to the wiki as a way to help others in the community with using the plugin.
+The [EpicAutomators wiki][Plugin wiki] is maintained by Songoda Reborn and covers
+installation, configuration, commands, permissions, dependencies, and compatibility.
 
 ## Support
-If you encounter any issues while using the plugin, feel free to contact us on
-[our Discord server][Discord invite].
+For help with EpicAutomators, join our [Discord server][Discord invite].
 
 ## Suggestions
-For suggestions about features you think should be added to the plugin to increase its functionality, feel free to
-create a thread over on [our Discord server][Discord invite].
+Share feature suggestions and feedback through our [Discord server][Discord invite].
 
 
-[Plugin page]: https://songoda.com/product/24
-[Plugin wiki]: https://songoda.notion.site/EpicAutomators-9bf402b5bbc1465dba40fd0fb14f65f4
+[Plugin page]: https://songoda-reborn.com/plugins/epicautomators
+[Plugin wiki]: https://songoda-reborn.com/plugins/epicautomators/wiki
 [Discord invite]: https://discord.gg/vtuJUfebrd
 
 [Discord shield]: https://img.shields.io/discord/1214289374506917889?color=5865F2&label=Discord&logo=discord&logoColor=5865F2
 [Latest version shield]: https://img.shields.io/badge/dynamic/xml?style=flat&color=blue&logo=github&logoColor=white&label=Latest&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcraftaro%2FEpicAutomators%2Fmaster%2Fpom.xml&query=%2F*%5Blocal-name()%3D'project'%5D%2F*%5Blocal-name()%3D'version'%5D
-
